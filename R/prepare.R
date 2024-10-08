@@ -675,15 +675,15 @@ makeSEFromDNAMethylationMatrix <- function(
     # Instead of looking on the size, it is better to set it as a argument as the annotation is different
     annotation <-   getMetPlatInfo(platform = met.platform, genome = genome)
 
-    rowRanges <- annotation[names(annotation) %in% rownames(betas),,drop = FALSE]
+    common_names <- intersect(rownames(betas), names(annotation))
+    rowRanges <- annotation[common_names,,drop = FALSE]
 
     colData <- tryCatch({
         colDataPrepare(colnames(betas))
     }, error = function(e){
         DataFrame(samples = colnames(betas))
     })
-    betas <- betas[rownames(betas) %in% names(rowRanges),,drop = FALSE]
-    betas <- betas[names(rowRanges),,drop = FALSE]
+    betas <- betas[common_names,,drop = FALSE]
     assay <- data.matrix(betas)
 
     betas <- SummarizedExperiment(
